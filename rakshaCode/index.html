@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<head>
+	<meta charset = "utf-8"/>
+	<title>
+		RakshaKavach
+	</title>
+	<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+	<script>
+		function showHide(){
+			if(document.getElementById("cityname").value=="tumkur"){
+				document.getElementById("areaSelect").style.display = "none";
+			}
+			else{
+				document.getElementById("areaSelect").style.display = "block";
+			}
+		}
+	</script>
+
+</head>
+<body>
+<center>
+<div class="form-row" align="center" style="marginTop:200">
+	<form method="POST" action={{url_for("upload")}}>
+			<label for="cityname">Choose the city: </label>
+			<select id="cityname" name ="cityname" onclick="showHide()" class="form-control">
+				<option value="bangalore">Bangalore</option>
+				<option value="tumkur">Tumkur</option>
+			</select>
+			<br>
+		<div id="areaSelect">
+			<label for="area">Choose area</label>
+			<select name="area" id="area" class="form-control">
+			<option value="ypr">Yeshwanthapura</option>
+			<option value="mtkr">Mathikere</option>
+			<option value="ecity">Electronic City</option>
+			<option value="white">White-Field</option>
+			<option value="majestic">Majestic</option>
+			<option value="indiranagar">Indiranagar</option>
+			</select>
+			<br>
+		</div>
+			<button type="submit" class="btn btn-primary">SUBMIT</button>
+	</form>
+</div>
+</center>
+</body>
+</body>
+</html>

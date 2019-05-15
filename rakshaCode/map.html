@@ -1,0 +1,193 @@
+<html lang="en">
+<head>
+
+<!--    <meta http-equiv="Content-Security-Policy" content="default-src *; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline' 'unsafe-eval' http://www.google.com">-->
+
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>HeatMap</title>
+    <style>
+#map {
+  height: 425px;
+}
+/* Optional: Makes the sample page fill the window. */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+#floating-panel {
+  position: absolute;
+  top: 10px;
+  left: 25%;
+  z-index: 5;
+  background-color: #fff;
+  padding: 5px;
+  border: 1px solid #999;
+  text-align: center;
+  font-family: 'Roboto','sans-serif';
+  line-height: 30px;
+  padding-left: 10px;
+}
+#floating-panel {
+  background-color: #fff;
+  border: 1px solid #999;
+  left: 25%;
+  padding: 5px;
+  position: absolute;
+  top: 10px;
+  z-index: 5;
+}
+</style>
+</head>
+<body>
+        <div id="floating-panel">
+                <button onclick="toggleHeatmap()">Toggle Heatmap</button>
+                <button onclick="changeGradient()">Change gradient</button>
+                <button onclick="changeRadius()">Change radius</button>
+                <button onclick="changeOpacity()">Change opacity</button>
+              </div>
+              <div id="map"></div>
+              <!-- Replace the value of the key parameter with your own API key. -->
+              <script async defer
+                      src="https://maps.googleapis.com/maps/api/js?key=#GOOGLE_MAP_KEY#&libraries=visualization&callback=initMap">
+              </script>
+
+              <script>
+              var map, heatmap,heatmap1, heatmap2;
+              var data=[], data1=[], data2=[];
+
+              var red = [
+                'rgba(255,0,0,0)',
+                'rgba(255,0,0,1)'
+              ];
+
+              var yellow = [
+                'rgba(255,255,0,0)',
+                'rgba(255,255,0,1)'
+              ];
+
+              var green = [
+                'rgba(0,255,0,0)',
+                'rgba(0,255,0,1)'
+              ];
+
+function initMap() {
+  map = new google.maps.Map(document.getElementById('map'), {
+    zoom: 13,
+    center: {lat: {{msg[0][0][0]}}, lng: {{msg[0][0][1]}}},
+    mapTypeId: 'satellite'
+  });
+
+        {% for row in msg %}
+<!--        arr.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}}), weight: {{row[1]}}})-->
+        if({{row[1]}}<=0.33){
+            data.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}})})
+        }
+        else if({{row[1]}}>0.33&&{{row[1]}}<=0.67){
+            data1.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}})})
+        }
+        else{
+            data2.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}})})
+        }
+    {% endfor %}
+
+
+
+
+
+<!--  var arr = []-->
+  heatmap = new google.maps.visualization.HeatmapLayer({
+<!--    data: getPoints(data),-->
+    data: data,
+    map: map,
+    radius: 25,
+     opacity:1
+  });
+
+  heatmap.set('gradient', heatmap.get('gradient')?null:yellow)
+
+  heatmap1 = new google.maps.visualization.HeatmapLayer({
+<!--    data: getPoints(data1),-->
+    data: data1,
+    map: map,
+    radius: 25,
+    opacity:1
+  });
+
+  heatmap1.set('gradient', heatmap1.get('gradient')?null:red)
+
+  heatmap2 = new google.maps.visualization.HeatmapLayer({
+<!--    data: getPoints(data2),-->
+    data: data2,
+    map: map,
+    radius: 25,
+    opacity:1
+  });
+
+  heatmap2.set('gradient', heatmap2.get('gradient')?null:green)
+
+  var trafficLayer = new google.maps.TrafficLayer();
+  trafficLayer.setMap(map);
+
+
+
+
+}
+
+function toggleHeatmap() {
+  heatmap.setMap(heatmap.getMap() ? null : map);
+}
+
+<!--function changeGradient() {-->
+<!--  var gradient = [-->
+<!--    'rgba(0, 255, 255, 0)',-->
+<!--    'rgba(0, 255, 255, 1)',-->
+<!--    'rgba(0, 191, 255, 1)',-->
+<!--    'rgba(0, 127, 255, 1)',-->
+<!--    'rgba(0, 63, 255, 1)',-->
+<!--    'rgba(0, 0, 255, 1)',-->
+<!--    'rgba(0, 0, 223, 1)',-->
+<!--    'rgba(0, 0, 191, 1)',-->
+<!--    'rgba(0, 0, 159, 1)',-->
+<!--    'rgba(0, 0, 127, 1)',-->
+<!--    'rgba(63, 0, 91, 1)',-->
+<!--    'rgba(127, 0, 63, 1)',-->
+<!--    'rgba(191, 0, 31, 1)',-->
+<!--    'rgba(255, 0, 0, 1)'-->
+<!--  ]-->
+<!--  heatmap.set('gradient', heatmap.get('gradient') ? null : gradient);-->
+<!--}-->
+
+function changeRadius() {
+  heatmap.set('radius', heatmap.get('radius') ? null : 20);
+}
+
+function changeOpacity() {
+  heatmap.set('opacity', heatmap.get('opacity') ? null : 0.2);
+}
+
+// Heatmap data: 500 Points
+function getPoints(arr) {
+
+    {% for row in msg %}
+<!--        arr.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}}), weight: {{row[1]}}})-->
+        if({{row[1]}}<=0.33){
+            data.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}})})
+        }
+        else if({{row[1]}}>0.33&&{{row[1]}}<=0.67){
+            data1.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}})})
+        }
+        else{
+            data2.push({location: new google.maps.LatLng({{row[0][0]}},{{row[0][1]}})})
+        }
+    {% endfor %}
+
+   return arr
+}
+
+</script>
+
+</body>
+</html>
